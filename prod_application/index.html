@@ -2,211 +2,176 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Enterprise CI/CD Platform — Live Production</title>
+    <title>Secure Production CI/CD System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
         body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(270deg, #0ea5e9, #6366f1, #22c55e, #a855f7, #ec4899);
-            background-size: 1000% 1000%;
-            animation: gradientMove 20s ease infinite;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #e5e7eb;
+            font-family: "Courier New", monospace;
+            background: black;
+            color: #00ff9c;
+            overflow: hidden;
         }
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
         }
 
-        .card {
-            max-width: 1100px;
-            width: 95%;
-            padding: 50px;
-            border-radius: 24px;
-            background: rgba(2, 6, 23, 0.75);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.15);
-        }
-
-        .top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .badge {
-            padding: 8px 18px;
-            border-radius: 999px;
-            background: linear-gradient(90deg, #22c55e, #16a34a);
-            color: #022c22;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            box-shadow: 0 0 20px rgba(34,197,94,0.6);
-        }
-
-        .clock {
-            font-size: 28px;
-            font-weight: 600;
-            color: #38bdf8;
-            text-shadow: 0 0 10px rgba(56,189,248,0.8);
+        .container {
+            max-width: 900px;
+            margin: 80px auto;
+            padding: 40px;
+            border: 1px solid #00ff9c;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            box-shadow: 0 0 30px #00ff9c;
+            text-align: center;
         }
 
         h1 {
-            font-size: 52px;
-            margin: 10px 0 10px 0;
-            line-height: 1.1;
-            background: linear-gradient(90deg, #38bdf8, #22c55e, #a78bfa, #f472b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ff9c;
         }
 
         .subtitle {
-            font-size: 22px;
-            color: #c7d2fe;
+            color: #00e5ff;
             margin-bottom: 30px;
-        }
-
-        .highlight-box {
-            margin: 30px 0;
-            padding: 26px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(34,197,94,0.15));
-            border: 1px solid rgba(255,255,255,0.2);
             font-size: 18px;
-            line-height: 1.7;
         }
 
-        .highlight-box b {
-            color: #22c55e;
+        .terminal {
+            text-align: left;
+            background: #020202;
+            border: 1px solid #00ff9c;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: inset 0 0 15px #00ff9c;
+            margin-top: 20px;
+            font-size: 15px;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 18px;
+        .terminal span {
+            color: #00e5ff;
+        }
+
+        .clock {
             margin-top: 30px;
-        }
-
-        .tech {
-            padding: 18px;
-            border-radius: 14px;
-            text-align: center;
-            font-weight: 600;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .tech:hover {
-            transform: translateY(-6px) scale(1.03);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            font-size: 22px;
+            color: #00e5ff;
+            text-shadow: 0 0 8px #00e5ff;
         }
 
         .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.15);
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            font-size: 14px;
-            color: #e0e7ff;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #7fffd4;
+            opacity: 0.8;
         }
 
-        .env {
-            color: #22c55e;
-            font-weight: 700;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 36px;
-            }
-            .card {
-                padding: 28px;
-            }
-            .clock {
-                font-size: 22px;
-            }
+        .glow {
+            color: #00ff9c;
+            text-shadow: 0 0 5px #00ff9c, 0 0 10px #00ff9c;
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <div class="top-row">
-            <div class="badge">LIVE • PRODUCTION</div>
-            <div class="clock" id="clock">--:--:--</div>
-        </div>
+<canvas id="matrix"></canvas>
 
-        <h1>Enterprise CI/CD Platform</h1>
-        <div class="subtitle">
-            Fully automated cloud-native deployment pipeline
-        </div>
+<div class="container">
+    <h1>🛡️ SECURE PRODUCTION DEPLOYMENT ACTIVE</h1>
+    <div class="subtitle">Cybersecurity Hardened CI/CD Infrastructure</div>
 
-        <div class="highlight-box">
-            👋 Hello, <b>Shubham Mishra</b> here. This is a <b>production-grade, fully automated CI/CD platform</b> built using
-            <b>Git, GitHub, Jenkins, Docker, Amazon ECR, Amazon ECS, AWS SSM, and AWS Secrets Manager</b>.
-        </div>
+    <div class="terminal">
+<pre>
+<span>root@production</span>:~$ status --system
+✔ GitHub Webhook Triggered
+✔ Jenkins Pipeline Executed
+✔ Docker Image Built
+✔ Image Pushed to Amazon ECR
+✔ New ECS Task Revision Registered
+✔ Zero-Downtime Deployment Completed
 
-        <p>
-            Every <b>git push</b> automatically triggers Jenkins via webhook, securely orchestrates deployment using AWS SSM,
-            builds a Docker image, pushes it to Amazon ECR, and performs a rolling deployment on Amazon ECS —
-            <b>with zero manual steps</b>.
-        </p>
+<span>root@production</span>:~$ security --checks
+✔ IAM Least Privilege
+✔ Secrets Manager Protected
+✔ No Hardcoded Credentials
+✔ Immutable Infrastructure
+✔ Fully Auditable Pipeline
 
-        <div class="grid">
-            <div class="tech">Git</div>
-            <div class="tech">GitHub</div>
-            <div class="tech">Jenkins</div>
-            <div class="tech">Docker</div>
-            <div class="tech">Amazon ECR</div>
-            <div class="tech">Amazon ECS</div>
-            <div class="tech">AWS SSM</div>
-            <div class="tech">Secrets Manager</div>
-        </div>
-
-        <div class="footer">
-            <div>
-                🚀 Deployed automatically via Jenkins → SSM → Docker → ECR → ECS
-            </div>
-            <div>
-                Environment: <span class="env">PRODUCTION</span>
-            </div>
-        </div>
+<span>root@production</span>:~$ whoami
+Shubham Mishra — Cloud | DevOps | Security Engineer
+</pre>
     </div>
 
-    <script>
-        function updateClock() {
-            const now = new Date();
-            const hh = String(now.getHours()).padStart(2, '0');
-            const mm = String(now.getMinutes()).padStart(2, '0');
-            const ss = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = `${hh}:${mm}:${ss}`;
-        }
+    <div class="clock" id="clock">--:--:--</div>
 
-        setInterval(updateClock, 1000);
-        updateClock();
-    </script>
+    <div class="footer">
+        🚀 Fully Automated Production CI/CD using GitHub • Jenkins • Docker • ECR • ECS • AWS SSM • Secrets Manager  
+        <br>
+        🔐 Designed with Enterprise-Grade Security & Zero Trust Principles
+    </div>
+</div>
+
+<script>
+    // Live Clock
+    function updateClock() {
+        const now = new Date();
+        document.getElementById("clock").innerText =
+            "🕒 " + now.toLocaleString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Matrix Background Effect
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+
+    const drops = [];
+    for (let x = 0; x < columns; x++) drops[x] = 1;
+
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#00ff9c";
+        ctx.font = fontSize + "px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = letters.charAt(Math.floor(Math.random() * letters.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+                drops[i] = 0;
+
+            drops[i]++;
+        }
+    }
+
+    setInterval(drawMatrix, 33);
+
+    window.onresize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    };
+</script>
 
 </body>
 </html>
