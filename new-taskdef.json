@@ -2,7 +2,7 @@
   "containerDefinitions": [
     {
       "name": "app-demo",
-      "image": "243017877199.dkr.ecr.ap-south-1.amazonaws.com/prod-repo:20260114210633",
+      "image": "243017877199.dkr.ecr.ap-south-1.amazonaws.com/prod-repo:20260114213458",
       "cpu": 512,
       "memory": 1024,
       "memoryReservation": 512,
