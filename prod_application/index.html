@@ -1,176 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Secure Production CI/CD System</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>CYBER DEFENSE COMMAND — Production</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
-        body {
-            font-family: "Courier New", monospace;
-            background: black;
-            color: #00ff9c;
-            overflow: hidden;
-        }
+body {
+    font-family: "Consolas", "Courier New", monospace;
+    background: black;
+    color: #00ff9c;
+    overflow: hidden;
+}
 
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: -1;
-        }
+/* MATRIX BACKGROUND */
+canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+}
 
-        .container {
-            max-width: 900px;
-            margin: 80px auto;
-            padding: 40px;
-            border: 1px solid #00ff9c;
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.85);
-            box-shadow: 0 0 30px #00ff9c;
-            text-align: center;
-        }
+/* TOP ALERT BAR */
+.alert {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #7f0000, #ff0000, #7f0000);
+    color: #fff;
+    text-align: center;
+    padding: 8px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: blink 1s infinite;
+    z-index: 10;
+}
 
-        h1 {
-            font-size: 36px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px #00ff9c;
-        }
+@keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
 
-        .subtitle {
-            color: #00e5ff;
-            margin-bottom: 30px;
-            font-size: 18px;
-        }
+/* MAIN CONTAINER */
+.container {
+    max-width: 1200px;
+    margin: 80px auto;
+    padding: 30px;
+    border: 1px solid #00ff9c;
+    background: rgba(0,0,0,0.85);
+    box-shadow: 0 0 40px #00ff9c;
+    border-radius: 10px;
+}
 
-        .terminal {
-            text-align: left;
-            background: #020202;
-            border: 1px solid #00ff9c;
-            padding: 20px;
-            border-radius: 6px;
-            box-shadow: inset 0 0 15px #00ff9c;
-            margin-top: 20px;
-            font-size: 15px;
-        }
+/* HEADER */
+h1 {
+    text-align: center;
+    font-size: 36px;
+    text-shadow: 0 0 15px red;
+    color: #ff4444;
+    margin-bottom: 10px;
+}
 
-        .terminal span {
-            color: #00e5ff;
-        }
+.subtitle {
+    text-align: center;
+    color: #00e5ff;
+    margin-bottom: 20px;
+}
 
-        .clock {
-            margin-top: 30px;
-            font-size: 22px;
-            color: #00e5ff;
-            text-shadow: 0 0 8px #00e5ff;
-        }
+/* GRID */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+}
 
-        .footer {
-            margin-top: 30px;
-            font-size: 13px;
-            color: #7fffd4;
-            opacity: 0.8;
-        }
+/* PANEL */
+.panel {
+    border: 1px solid #00ff9c;
+    padding: 15px;
+    background: rgba(0,0,0,0.7);
+    box-shadow: inset 0 0 15px #00ff9c;
+    border-radius: 6px;
+}
 
-        .glow {
-            color: #00ff9c;
-            text-shadow: 0 0 5px #00ff9c, 0 0 10px #00ff9c;
-        }
-    </style>
+/* TITLES */
+.panel h3 {
+    color: #00e5ff;
+    margin-bottom: 10px;
+    text-shadow: 0 0 5px #00e5ff;
+}
+
+/* TERMINAL */
+.terminal {
+    height: 220px;
+    overflow: hidden;
+    font-size: 14px;
+}
+
+.log {
+    animation: scroll 20s linear infinite;
+}
+
+@keyframes scroll {
+    from { transform: translateY(100%); }
+    to { transform: translateY(-100%); }
+}
+
+/* STATUS */
+.ok { color: #00ff9c; }
+.warn { color: #ffcc00; }
+.crit { color: #ff4444; }
+
+/* CLOCK */
+.clock {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 22px;
+    color: #00e5ff;
+    text-shadow: 0 0 10px #00e5ff;
+}
+
+/* GLITCH */
+.glitch {
+    position: relative;
+    color: #ff4444;
+    animation: glitch 1s infinite;
+}
+
+@keyframes glitch {
+    0% { text-shadow: 2px 0 red, -2px 0 cyan; }
+    50% { text-shadow: -2px 0 red, 2px 0 cyan; }
+    100% { text-shadow: 2px 0 red, -2px 0 cyan; }
+}
+
+/* FOOTER */
+.footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 13px;
+    opacity: 0.8;
+}
+</style>
 </head>
 <body>
+
+<div class="alert">⚠️ LIVE CYBER ATTACK SIMULATION — THREAT LEVEL: CRITICAL ⚠️</div>
 
 <canvas id="matrix"></canvas>
 
 <div class="container">
-    <h1>🛡️ SECURE PRODUCTION DEPLOYMENT ACTIVE</h1>
-    <div class="subtitle">Cybersecurity Hardened CI/CD Infrastructure</div>
+    <h1 class="glitch">CYBER DEFENSE COMMAND CENTER</h1>
+    <div class="subtitle">Enterprise Production CI/CD — Zero Trust — Active Threat Mitigation</div>
 
-    <div class="terminal">
+    <div class="grid">
+
+        <div class="panel">
+            <h3>🚨 Live Threat Feed</h3>
+            <div class="terminal">
+                <div class="log">
 <pre>
-<span>root@production</span>:~$ status --system
-✔ GitHub Webhook Triggered
-✔ Jenkins Pipeline Executed
-✔ Docker Image Built
-✔ Image Pushed to Amazon ECR
-✔ New ECS Task Revision Registered
-✔ Zero-Downtime Deployment Completed
-
-<span>root@production</span>:~$ security --checks
-✔ IAM Least Privilege
-✔ Secrets Manager Protected
-✔ No Hardcoded Credentials
-✔ Immutable Infrastructure
-✔ Fully Auditable Pipeline
-
-<span>root@production</span>:~$ whoami
-Shubham Mishra — Cloud | DevOps | Security Engineer
+[CRITICAL] Brute force attempt detected from 185.92.***.***
+[WARNING ] Port scan detected on 10.0.2.15
+[INFO    ] Jenkins pipeline executed successfully
+[OK      ] Image pushed to Amazon ECR
+[OK      ] ECS new task revision deployed
+[CRITICAL] SQL injection attempt blocked
+[WARNING ] Suspicious API token usage detected
+[OK      ] IAM policy validation passed
+[OK      ] Secrets Manager rotation OK
+[CRITICAL] DDoS spike mitigated by AWS Shield
+[INFO    ] Zero downtime deployment successful
+[OK      ] System integrity verified
 </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>🛡️ System Security Status</h3>
+<pre>
+IAM Least Privilege:      <span class="ok">ENFORCED</span>
+Secrets Exposure:        <span class="ok">NONE</span>
+Image Integrity:         <span class="ok">VERIFIED</span>
+Supply Chain Security:   <span class="ok">HARDENED</span>
+Zero Trust Mode:         <span class="ok">ACTIVE</span>
+WAF / Shield:            <span class="ok">ENABLED</span>
+Intrusion Detection:     <span class="ok">RUNNING</span>
+</pre>
+        </div>
+
+        <div class="panel">
+            <h3>🚀 CI/CD Deployment Status</h3>
+<pre>
+GitHub Webhook:      <span class="ok">TRIGGERED</span>
+Jenkins Pipeline:   <span class="ok">SUCCESS</span>
+Docker Build:       <span class="ok">SUCCESS</span>
+ECR Push:           <span class="ok">SUCCESS</span>
+ECS New Revision:   <span class="ok">DEPLOYED</span>
+Rollback Strategy: <span class="ok">ARMED</span>
+</pre>
+        </div>
+
+        <div class="panel">
+            <h3>🧠 Operator Console</h3>
+<pre>
+root@soc:~# whoami
+Shubham Mishra — Cloud | DevOps | Security Engineer
+
+root@soc:~# status --pipeline
+SYSTEM OPERATIONAL
+
+root@soc:~# threat-level
+CRITICAL (SIMULATED)
+</pre>
+        </div>
+
     </div>
 
     <div class="clock" id="clock">--:--:--</div>
 
     <div class="footer">
-        🚀 Fully Automated Production CI/CD using GitHub • Jenkins • Docker • ECR • ECS • AWS SSM • Secrets Manager  
+        GitHub → Jenkins → Docker → ECR → ECS → Zero-Downtime Secure Deployment  
         <br>
-        🔐 Designed with Enterprise-Grade Security & Zero Trust Principles
+        AWS SSM • Secrets Manager • IAM • Immutable Infrastructure
     </div>
 </div>
 
 <script>
-    // Live Clock
-    function updateClock() {
-        const now = new Date();
-        document.getElementById("clock").innerText =
-            "🕒 " + now.toLocaleString();
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+/* CLOCK */
+function updateClock() {
+    const now = new Date();
+    document.getElementById("clock").innerText = "🕒 " + now.toLocaleString();
+}
+setInterval(updateClock, 1000);
+updateClock();
 
-    // Matrix Background Effect
-    const canvas = document.getElementById("matrix");
-    const ctx = canvas.getContext("2d");
+/* MATRIX EFFECT */
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
 
+function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+}
+resize();
+window.onresize = resize;
 
-    const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@";
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
+const chars = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@";
+const fontSize = 14;
+let columns = canvas.width / fontSize;
+let drops = [];
 
-    const drops = [];
-    for (let x = 0; x < columns; x++) drops[x] = 1;
+function initDrops() {
+    columns = canvas.width / fontSize;
+    drops = [];
+    for (let i = 0; i < columns; i++) drops[i] = Math.random() * canvas.height;
+}
+initDrops();
 
-    function drawMatrix() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+function drawMatrix() {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = "#00ff9c";
-        ctx.font = fontSize + "px monospace";
+    ctx.fillStyle = "#00ff9c";
+    ctx.font = fontSize + "px monospace";
 
-        for (let i = 0; i < drops.length; i++) {
-            const text = letters.charAt(Math.floor(Math.random() * letters.length));
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+    for (let i = 0; i < drops.length; i++) {
+        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
-                drops[i] = 0;
-
-            drops[i]++;
-        }
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
     }
-
-    setInterval(drawMatrix, 33);
-
-    window.onresize = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    };
+}
+setInterval(drawMatrix, 33);
 </script>
 
 </body>
