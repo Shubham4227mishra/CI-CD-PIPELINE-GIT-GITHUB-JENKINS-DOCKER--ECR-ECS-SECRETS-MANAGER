@@ -24,7 +24,8 @@ pipeline {
         stage("Build Docker Image") {
             steps {
                 sh """
-                docker build -t \$ECR_REPO:\$BUILD_NUMBER .
+                docker build -t $ECR_REPO:$BUILD_NUMBER prod_application
+
                 """
             }
         }
