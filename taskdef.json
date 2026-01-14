@@ -1,10 +1,10 @@
 {
     "taskDefinition": {
-        "taskDefinitionArn": "arn:aws:ecs:ap-south-1:243017877199:task-definition/prod_task-definition:1",
+        "taskDefinitionArn": "arn:aws:ecs:ap-south-1:243017877199:task-definition/prod_task-definition:2",
         "containerDefinitions": [
             {
                 "name": "app-demo",
-                "image": "243017877199.dkr.ecr.ap-south-1.amazonaws.com/prod-repo@sha256:e2e9fe32bbb8484cab1e7d3228279b1b0fd9c0948f675a91ad0ebdbbb934a388",
+                "image": "243017877199.dkr.ecr.ap-south-1.amazonaws.com/prod-repo:20260114205920",
                 "cpu": 512,
                 "memory": 1024,
                 "memoryReservation": 512,
@@ -39,7 +39,7 @@
         "family": "prod_task-definition",
         "executionRoleArn": "arn:aws:iam::243017877199:role/ecsTaskExecutionRole",
         "networkMode": "awsvpc",
-        "revision": 1,
+        "revision": 2,
         "volumes": [],
         "status": "ACTIVE",
         "requiresAttributes": [
@@ -74,8 +74,8 @@
         "placementConstraints": [],
         "compatibilities": [
             "EC2",
-            "MANAGED_INSTANCES",
-            "FARGATE"
+            "FARGATE",
+            "MANAGED_INSTANCES"
         ],
         "runtimePlatform": {
             "cpuArchitecture": "X86_64",
@@ -86,8 +86,8 @@
         ],
         "cpu": "512",
         "memory": "1024",
-        "registeredAt": "2026-01-14T20:22:46.172000+00:00",
-        "registeredBy": "arn:aws:iam::243017877199:root",
+        "registeredAt": "2026-01-14T20:59:24.034000+00:00",
+        "registeredBy": "arn:aws:sts::243017877199:assumed-role/jenkins_worker_node_iam_role/i-026b3fdb2246e82a3",
         "enableFaultInjection": false
     },
     "tags": []
