@@ -1,174 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>NASA Mission Control – Live Ops</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<title>NASA Quantum Command – Global Defense Grid</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Tahoma, sans-serif;
-      background: radial-gradient(circle at top, #020824, #000000);
-      color: #00e5ff;
-      overflow-x: hidden;
-    }
+<style>
+:root {
+  --cyan: #00f0ff;
+  --red: #ff004c;
+  --green: #00ff88;
+  --purple: #8a2be2;
+}
 
-    header {
-      background: linear-gradient(90deg, #00172a, #002f4b);
-      padding: 20px;
-      text-align: center;
-      font-size: 28px;
-      letter-spacing: 2px;
-      font-weight: bold;
-      border-bottom: 2px solid #00e5ff;
-    }
+* { box-sizing: border-box; }
 
-    .container {
-      padding: 30px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-    }
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background:
+    linear-gradient(180deg, #020314, #000000),
+    repeating-linear-gradient(0deg, rgba(0,255,255,0.03) 0, rgba(0,255,255,0.03) 1px, transparent 1px, transparent 3px);
+  color: var(--cyan);
+  overflow-x: hidden;
+}
 
-    .card {
-      background: rgba(0, 20, 40, 0.8);
-      border: 1px solid #00e5ff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
-      transition: 0.3s;
-    }
+/* ===== HEADER ===== */
+header {
+  background: linear-gradient(90deg, #050b2e, #12003a, #050b2e);
+  padding: 20px;
+  text-align: center;
+  font-size: 28px;
+  letter-spacing: 3px;
+  font-weight: 900;
+  border-bottom: 2px solid var(--cyan);
+  text-shadow: 0 0 10px var(--cyan);
+}
 
-    .card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 0 40px rgba(0, 229, 255, 0.7);
-    }
+.glitch {
+  position: relative;
+  animation: glitch 2s infinite;
+}
 
-    .title {
-      font-size: 20px;
-      margin-bottom: 10px;
-      color: #7df9ff;
-    }
+@keyframes glitch {
+  0% { text-shadow: 2px 0 red, -2px 0 cyan; }
+  50% { text-shadow: -2px 0 red, 2px 0 cyan; }
+  100% { text-shadow: 2px 0 red, -2px 0 cyan; }
+}
 
-    .value {
-      font-size: 28px;
-      font-weight: bold;
-      color: #ffffff;
-    }
+/* ===== TOP BAR ===== */
+.topbar {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  border-bottom: 1px solid rgba(0,240,255,0.3);
+  background: rgba(0,0,0,0.6);
+}
 
-    .log {
-      background: black;
-      color: #00ff00;
-      font-family: monospace;
-      padding: 15px;
-      border-radius: 8px;
-      height: 250px;
-      overflow-y: auto;
-      border: 1px solid #00ff00;
-    }
+/* ===== GRID ===== */
+.container {
+  padding: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 14px;
-      color: #888;
-      border-top: 1px solid #00e5ff;
-    }
+/* ===== CARDS ===== */
+.card {
+  background: rgba(5, 10, 30, 0.85);
+  border: 1px solid var(--cyan);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 25px rgba(0,240,255,0.3);
+  transition: 0.3s;
+  position: relative;
+  overflow: hidden;
+}
 
-    .blink {
-      animation: blink 1s infinite;
-    }
+.card::after {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(120deg, transparent, rgba(0,240,255,0.15), transparent);
+  animation: scan 6s infinite;
+}
 
-    @keyframes blink {
-      0% { opacity: 1; }
-      50% { opacity: 0.2; }
-      100% { opacity: 1; }
-    }
+@keyframes scan {
+  0% { transform: translate(-50%, -50%); }
+  100% { transform: translate(50%, 50%); }
+}
 
-    .status-ok {
-      color: #00ff00;
-    }
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 50px rgba(0,240,255,0.8);
+}
 
-    .status-warn {
-      color: #ffaa00;
-    }
-  </style>
+/* ===== TEXT ===== */
+.title {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.value {
+  font-size: 26px;
+  font-weight: bold;
+  color: white;
+}
+
+.ok { color: var(--green); }
+.warn { color: #ffaa00; }
+.danger { color: var(--red); animation: blink 1s infinite; }
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+/* ===== LOG ===== */
+.log {
+  background: black;
+  color: #00ff00;
+  font-family: monospace;
+  padding: 15px;
+  border-radius: 10px;
+  height: 280px;
+  overflow-y: auto;
+  border: 1px solid #00ff00;
+  box-shadow: inset 0 0 20px rgba(0,255,0,0.3);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  color: #777;
+  border-top: 1px solid var(--cyan);
+  margin-top: 30px;
+}
+</style>
 </head>
+
 <body>
 
-<header>
-  🛰️ NASA MISSION CONTROL — LIVE SPACE OPERATIONS CENTER
+<header class="glitch">
+🌌 NASA QUANTUM DEFENSE GRID — GLOBAL SPACE COMMAND
 </header>
+
+<div class="topbar">
+  <div>🕒 UTC TIME: <span id="clock"></span></div>
+  <div>🌐 NETWORK: <span class="ok">CONNECTED</span></div>
+  <div>🛡️ THREAT LEVEL: <span class="danger">ELEVATED</span></div>
+</div>
 
 <div class="container">
 
-  <div class="card">
-    <div class="title">🚀 Mission Name</div>
-    <div class="value">ARTEMIS-X ORBITAL DEPLOY</div>
-  </div>
-
-  <div class="card">
-    <div class="title">🧭 Mission Status</div>
-    <div class="value status-ok blink">OPERATIONAL</div>
-  </div>
-
-  <div class="card">
-    <div class="title">🌍 Current Orbit</div>
-    <div class="value">LOW EARTH ORBIT</div>
-  </div>
-
-  <div class="card">
-    <div class="title">⛽ Fuel Level</div>
-    <div class="value">87%</div>
-  </div>
-
-  <div class="card">
-    <div class="title">📡 Telemetry Link</div>
-    <div class="value status-ok">CONNECTED</div>
-  </div>
-
-  <div class="card">
-    <div class="title">🧠 AI Navigation Core</div>
-    <div class="value status-ok">ONLINE</div>
-  </div>
+  <div class="card"><div class="title">MISSION</div><div class="value">ORION SKY SHIELD</div></div>
+  <div class="card"><div class="title">MISSION STATUS</div><div class="value ok">ACTIVE</div></div>
+  <div class="card"><div class="title">ORBIT ZONE</div><div class="value">LOW EARTH DEFENSE GRID</div></div>
+  <div class="card"><div class="title">FUEL CORE</div><div class="value">91%</div></div>
+  <div class="card"><div class="title">AI COMMAND CORE</div><div class="value ok">ONLINE</div></div>
+  <div class="card"><div class="title">WEAPON SATELLITES</div><div class="value warn">ARMED</div></div>
 
   <div class="card" style="grid-column: 1 / -1;">
-    <div class="title">📟 Live Mission Log</div>
+    <div class="title">LIVE BATTLESPACE TELEMETRY LOG</div>
     <div class="log" id="log">
-      [BOOT] Initializing spacecraft systems...<br>
-      [OK] Navigation core online<br>
-      [OK] Telemetry uplink established<br>
-      [OK] Reactor stabilized<br>
-      [INFO] Awaiting next mission command...<br>
+      [BOOT] Quantum command core initializing...<br>
+      [OK] Orbital defense network synchronized<br>
+      [OK] AI threat analysis online<br>
+      [WARN] Unknown object detected beyond lunar orbit<br>
+      [INFO] Weapons grid standing by...<br>
     </div>
   </div>
 
 </div>
 
 <footer>
-  © 2026 Space Operations Command | Powered by ECS • ECR • Jenkins • AWS • CI/CD
+© 2026 Global Space Defense Command • Deployed via Jenkins → Docker → ECR → ECS
 </footer>
 
 <script>
-  const log = document.getElementById("log");
+/* CLOCK */
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent = now.toUTCString();
+}
+setInterval(updateClock, 1000);
+updateClock();
 
-  const messages = [
-    "[INFO] Solar panel alignment adjusted",
-    "[OK] Course correction complete",
-    "[INFO] Scanning deep space sector 7G",
-    "[OK] All systems nominal",
-    "[WARN] Minor radiation spike detected",
-    "[OK] Shielding compensated",
-    "[INFO] Telemetry sync complete",
-    "[OK] Mission stable"
-  ];
+/* LOG SIMULATION */
+const log = document.getElementById("log");
+const messages = [
+  "[SCAN] Deep space sector X-19 scanned",
+  "[OK] Orbital cannons synchronized",
+  "[WARN] Unknown signal spike detected",
+  "[AI] Threat probability recalculated",
+  "[OK] Shield grid stable",
+  "[DEFENSE] Interceptor drones armed",
+  "[INFO] Quantum telemetry synced",
+  "[ALERT] Incoming object under analysis"
+];
 
-  setInterval(() => {
-    const msg = messages[Math.floor(Math.random() * messages.length)];
-    log.innerHTML += msg + "<br>";
-    log.scrollTop = log.scrollHeight;
-  }, 2000);
+setInterval(() => {
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+  log.innerHTML += msg + "<br>";
+  log.scrollTop = log.scrollHeight;
+}, 1800);
 </script>
 
 </body>
