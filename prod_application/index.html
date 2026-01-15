@@ -1,102 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shubham Mishra | DevOps Portfolio</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --dark: #1e293b;
-            --light: #f8fafc;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            background-color: var(--light);
-            color: var(--dark);
-        }
-        header {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: white;
-            padding: 3rem 1rem;
-            text-align: center;
-        }
-        .container {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        #clock {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 1rem 0;
-            color: #60a5fa;
-        }
-        .pipeline-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            margin-top: -50px;
-        }
-        h2 { color: var(--primary); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
-        .step-list { list-style: none; padding: 0; }
-        .step-list li {
-            margin-bottom: 1rem;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-        .step-list li::before {
-            content: "➔";
-            position: absolute;
-            left: 0;
-            color: var(--primary);
-        }
-        .badge {
-            background: #dbeafe;
-            color: #1e40af;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shubham Mishra | Cloud & DevOps Portfolio</title>
+
+<style>
+:root {
+  --primary: #38bdf8;
+  --secondary: #22c55e;
+  --dark: #020617;
+  --light: #f8fafc;
+  --card: #020617cc;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: radial-gradient(circle at top, #020824, #000000);
+  color: #e5faff;
+}
+
+header {
+  background: linear-gradient(135deg, #020617, #020824);
+  padding: 3rem 1rem;
+  text-align: center;
+  border-bottom: 2px solid var(--primary);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 3rem;
+  letter-spacing: 2px;
+}
+
+header p {
+  margin-top: 0.5rem;
+  color: #7dd3fc;
+  font-size: 1.2rem;
+}
+
+#clock {
+  font-size: 2.2rem;
+  margin-top: 1rem;
+  color: #22d3ee;
+  font-weight: bold;
+}
+
+.version {
+  margin-top: 1rem;
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+  color: #022c22;
+  font-weight: bold;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid #0ea5e9;
+  border-radius: 14px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 25px rgba(14,165,233,0.25);
+}
+
+h2 {
+  color: #38bdf8;
+  border-bottom: 1px solid #0ea5e9;
+  padding-bottom: 10px;
+}
+
+.flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-top: 1.5rem;
+}
+
+.flow div {
+  background: #020617;
+  border: 1px solid #0ea5e9;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.flow div:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(56,189,248,0.7);
+}
+
+.badge {
+  display: inline-block;
+  background: #0ea5e9;
+  color: #020617;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+  border-top: 1px solid #0ea5e9;
+  margin-top: 40px;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-    <h1>Shubham Mishra</h1>
-    <p>DevOps & Cloud Infrastructure Engineer</p>
-    <div id="clock">00:00:00</div>
+  <h1>Shubham Mishra</h1>
+  <p>Cloud • DevOps • Infrastructure Engineer</p>
+
+  <div id="clock">00:00:00</div>
+
+  <div class="version">
+    🚀 LIVE DEPLOYMENT • VERSION: 2026-01-15 • CI/CD ACTIVE
+  </div>
 </header>
 
 <div class="container">
-    <div class="pipeline-card">
-        <h2>Project: Enterprise CI/CD Pipeline</h2>
-        <p>This project demonstrated a production-grade automated deployment pipeline using a distributed Jenkins architecture on AWS.</p>
-        
-        <h3>The Architecture</h3>
-        <ul class="step-list">
-            <li><strong>Orchestration:</strong> <span class="badge">Jenkins Master</span> triggers builds but remains lightweight to ensure high availability.</li>
-            <li><strong>Security:</strong> Credentials (GitHub PAT) are never stored in Jenkins. The <span class="badge">Worker EC2</span> fetches them securely from <span class="badge">AWS Secrets Manager</span> using IAM roles.</li>
-            <li><strong>Execution:</strong> The <span class="badge">AWS SSM</span> agent allows the Master to securely communicate with Workers without exposing SSH ports.</li>
-            <li><strong>Containerization:</strong> The Worker node handles the <code>git clone</code>, <code>docker build</code>, and pushes the image to <span class="badge">Amazon ECR</span>.</li>
-            <li><strong>Deployment:</strong> Automatic updates to <span class="badge">Amazon ECS</span> (Task Definitions & Service) ensure zero-downtime deployments.</li>
-        </ul>
+
+  <div class="card">
+    <h2>📦 Production CI/CD Platform</h2>
+    <p>
+      This environment demonstrates a <b>real enterprise-grade, zero-SSH, fully automated CI/CD system</b> built on AWS using Jenkins, Docker, ECR, ECS, SSM and Secrets Manager.
+    </p>
+    <p>
+      Every GitHub push automatically triggers a secure pipeline and deploys directly to AWS Fargate with immutable versioned images.
+    </p>
+    <span class="badge">PRODUCTION-GRADE</span>
+    <span class="badge">ZERO-DOWNTIME</span>
+    <span class="badge">IMMUTABLE</span>
+  </div>
+
+  <div class="card">
+    <h2>⚙️ Deployment Flow</h2>
+
+    <div class="flow">
+      <div>👨‍💻 Developer Push</div>
+      <div>🐙 GitHub Webhook</div>
+      <div>🧠 Jenkins Master</div>
+      <div>🔐 AWS SSM</div>
+      <div>🏗️ Worker EC2</div>
+      <div>🐳 Docker Build</div>
+      <div>📦 ECR Push</div>
+      <div>🚀 ECS Deploy</div>
+      <div>✅ Live in Prod</div>
     </div>
+  </div>
+
+  <div class="card">
+    <h2>🛡️ Security Design</h2>
+    <ul>
+      <li>No SSH keys on servers</li>
+      <li>No credentials stored in Jenkins</li>
+      <li>IAM Roles + AWS Secrets Manager</li>
+      <li>SSM RunCommand for secure execution</li>
+      <li>Private ECR + Fargate</li>
+    </ul>
+  </div>
+
 </div>
 
+<footer>
+  © 2026 Shubham Mishra • Powered by AWS ECS • ECR • Jenkins • CI/CD • Docker
+</footer>
+
 <script>
-    function updateClock() {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString();
-        document.getElementById('clock').textContent = timeString;
-    }
-    setInterval(updateClock, 1000);
-    updateClock(); // Initial call
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent = now.toLocaleTimeString();
+}
+setInterval(updateClock, 1000);
+updateClock();
 </script>
 
 </body>
-</html>iii
+</html>
+
