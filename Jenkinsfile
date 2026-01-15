@@ -13,65 +13,46 @@ pipeline {
             }
         }
 
-        stage("Deploy via SSM") {
+        stage("Detect Changes") {
             steps {
-                sh '''
-                set -e
+                script {
+                    CHANGED = sh(
+                        script: "git diff --name-only HEAD~1 HEAD",
+                        returnStdout: true
+                    ).trim()
 
-                echo "Triggering deployment via SSM..."
+                    echo "Changed files:\n${CHANGED}"
 
-                COMMAND_ID=$(aws ssm send-command \
-                  --instance-ids ${INSTANCE_ID} \
-                  --document-name AWS-RunShellScript \
-                  --parameters commands="/home/ubuntu/deploy.sh" \
-                  --region ${AWS_REGION} \
-                  --query "Command.CommandId" \
-                  --output text)
-
-                echo "SSM Command ID: $COMMAND_ID"
-
-                echo "Waiting for SSM command to finish..."
-
-                STATUS="InProgress"
-
-                while [ "$STATUS" = "Pending" ] || [ "$STATUS" = "InProgress" ]; do
-                    sleep 5
-                    STATUS=$(aws ssm get-command-invocation \
-                      --command-id $COMMAND_ID \
-                      --instance-id ${INSTANCE_ID} \
-                      --region ${AWS_REGION} \
-                      --query "Status" \
-                      --output text)
-
-                    echo "Current status: $STATUS"
-                done
-
-                echo "Final SSM Status: $STATUS"
-
-                if [ "$STATUS" != "Success" ]; then
-                    echo "❌ DEPLOYMENT FAILED ON WORKER NODE"
-                    echo "Fetching logs..."
-
-                    aws ssm get-command-invocation \
-                      --command-id $COMMAND_ID \
-                      --instance-id ${INSTANCE_ID} \
-                      --region ${AWS_REGION}
-
-                    exit 1
-                fi
-
-                echo "✅ DEPLOYMENT SUCCEEDED"
-                '''
+                    DEPLOY_NASA = CHANGED.contains("nasa_application/")
+                    DEPLOY_PROD = CHANGED.contains("prod_application/")
+                }
             }
         }
-    }
 
-    post {
-        success {
-            echo "🎉 Pipeline completed successfully"
+        stage("Deploy NASA") {
+            when { expression { DEPLOY_NASA } }
+            steps {
+                sh """
+                aws ssm send-command \
+                  --instance-ids ${INSTANCE_ID} \
+                  --document-name AWS-RunShellScript \
+                  --parameters commands="/home/ubuntu/deploy.sh nasa" \
+                  --region ${AWS_REGION}
+                """
+            }
         }
-        failure {
-            echo "🔥 Pipeline failed because deployment failed"
+
+        stage("Deploy PROD") {
+            when { expression { DEPLOY_PROD } }
+            steps {
+                sh """
+                aws ssm send-command \
+                  --instance-ids ${INSTANCE_ID} \
+                  --document-name AWS-RunShellScript \
+                  --parameters commands="/home/ubuntu/deploy.sh prod" \
+                  --region ${AWS_REGION}
+                """
+            }
         }
     }
 }
