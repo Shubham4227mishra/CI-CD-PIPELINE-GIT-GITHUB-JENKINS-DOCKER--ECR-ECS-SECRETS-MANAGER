@@ -3,809 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYBER DEFENSE FORCE | Shubham Mishra</title>
+    <title>Shubham Mishra | DevOps Portfolio</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #2563eb;
+            --dark: #1e293b;
+            --light: #f8fafc;
         }
-
         body {
-            font-family: 'Share Tech Mono', monospace;
-            background: #000000;
-            color: #00ff00;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            background-color: var(--light);
+            color: var(--dark);
         }
-
-        /* Matrix Rain Effect */
-        #matrix-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            opacity: 0.15;
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
         }
-
-        /* Scanline Effect */
-        .scanline {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, 0) 50%,
-                rgba(0, 255, 0, 0.02) 51%
-            );
-            background-size: 100% 4px;
-            animation: scanline 8s linear infinite;
-            pointer-events: none;
-            z-index: 999;
-        }
-
-        @keyframes scanline {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(100vh); }
-        }
-
         .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
         }
-
-        /* Terminal Header */
-        .terminal-header {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #00ff00;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5),
-                        inset 0 0 20px rgba(0, 255, 0, 0.1);
-        }
-
-        .terminal-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #00ff00;
-        }
-
-        .terminal-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            border: 1px solid #00ff00;
-        }
-
-        .btn.red { background: #ff0000; box-shadow: 0 0 5px #ff0000; }
-        .btn.yellow { background: #ffff00; box-shadow: 0 0 5px #ffff00; }
-        .btn.green { background: #00ff00; box-shadow: 0 0 5px #00ff00; }
-
-        .terminal-title {
-            font-family: 'Orbitron', sans-serif;
-            color: #00ff00;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .system-time {
-            font-size: 0.85em;
-            color: #00ff00;
-        }
-
-        /* Main Content */
-        .cyber-header {
-            text-align: center;
-            padding: 40px 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00ff00;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
-        }
-
-        .cyber-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.3), transparent);
-            animation: slide 3s infinite;
-        }
-
-        @keyframes slide {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .skull-icon {
-            font-size: 4em;
-            animation: pulse 2s ease-in-out infinite;
-            text-shadow: 0 0 20px #ff0000;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-
-        .main-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5em;
-            font-weight: 900;
-            color: #ff0000;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            margin: 20px 0;
-            text-shadow: 0 0 10px #ff0000,
-                         0 0 20px #ff0000,
-                         0 0 30px #ff0000;
-            animation: glitch 3s infinite;
-        }
-
-        @keyframes glitch {
-            0%, 90%, 100% { transform: translate(0); }
-            92% { transform: translate(-2px, 2px); }
-            94% { transform: translate(2px, -2px); }
-            96% { transform: translate(-2px, -2px); }
-            98% { transform: translate(2px, 2px); }
-        }
-
-        .agent-name {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5em;
-            color: #00ffff;
-            text-shadow: 0 0 10px #00ffff;
-            margin: 10px 0;
-        }
-
-        .classification {
-            display: inline-block;
-            background: #ff0000;
-            color: #000;
-            padding: 8px 20px;
+        #clock {
+            font-size: 2.5rem;
             font-weight: bold;
-            margin: 15px 5px;
-            font-family: 'Orbitron', sans-serif;
-            box-shadow: 0 0 15px #ff0000;
-            animation: blink 1.5s infinite;
+            margin: 1rem 0;
+            color: #60a5fa;
         }
-
-        @keyframes blink {
-            0%, 50%, 100% { opacity: 1; }
-            25%, 75% { opacity: 0.5; }
+        .pipeline-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-top: -50px;
         }
-
-        /* System Status Grid */
-        .status-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .status-panel {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #00ff00;
-            padding: 20px;
+        h2 { color: var(--primary); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .step-list { list-style: none; padding: 0; }
+        .step-list li {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
             position: relative;
-            overflow: hidden;
         }
-
-        .status-panel::before {
-            content: '';
+        .step-list li::before {
+            content: "➔";
             position: absolute;
-            top: 0;
             left: 0;
-            width: 100%;
-            height: 2px;
-            background: #00ff00;
-            animation: scan 2s linear infinite;
+            color: var(--primary);
         }
-
-        @keyframes scan {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .status-panel h3 {
-            font-family: 'Orbitron', sans-serif;
-            color: #00ffff;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            text-transform: uppercase;
-        }
-
-        .status-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
-        }
-
-        .status-value {
-            color: #00ff00;
-            font-weight: bold;
-        }
-
-        .status-value.active {
-            animation: flash 1s infinite;
-        }
-
-        @keyframes flash {
-            0%, 100% { color: #00ff00; }
-            50% { color: #ffff00; }
-        }
-
-        /* Tech Arsenal */
-        .tech-arsenal {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #ff0000;
-            padding: 30px;
-            margin: 30px 0;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
-        }
-
-        .arsenal-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2em;
-            color: #ff0000;
-            text-align: center;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px #ff0000;
-        }
-
-        .tech-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-        }
-
-        .tech-item {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00ff00;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
-            cursor: crosshair;
-        }
-
-        .tech-item:hover {
-            border-color: #ff0000;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-            transform: scale(1.05);
-        }
-
-        .tech-item::before {
-            content: '>';
-            position: absolute;
-            left: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #00ff00;
-            font-size: 1.5em;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .tech-item:hover::before {
-            opacity: 1;
-            animation: cursor-blink 1s infinite;
-        }
-
-        @keyframes cursor-blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        .tech-icon {
-            font-size: 2em;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 5px currentColor);
-        }
-
-        .tech-name {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            color: #00ff00;
-            font-size: 0.9em;
-        }
-
-        /* Attack Vector Flow */
-        .attack-vector {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #ffff00;
-            padding: 30px;
-            margin: 30px 0;
-            box-shadow: 0 0 30px rgba(255, 255, 0, 0.3);
-        }
-
-        .vector-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2em;
-            color: #ffff00;
-            text-align: center;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px #ffff00;
-        }
-
-        .pipeline-steps {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .step {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00ff00;
-            padding: 15px 25px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            position: relative;
-            flex: 1;
-            min-width: 120px;
-            text-align: center;
-            animation: step-glow 2s ease-in-out infinite;
-        }
-
-        .step:nth-child(odd) {
-            animation-delay: 0.5s;
-        }
-
-        @keyframes step-glow {
-            0%, 100% {
-                box-shadow: 0 0 5px #00ff00;
-                border-color: #00ff00;
-            }
-            50% {
-                box-shadow: 0 0 20px #00ff00;
-                border-color: #00ffff;
-            }
-        }
-
-        .arrow-right {
-            color: #ff0000;
-            font-size: 2em;
-            font-weight: bold;
-            text-shadow: 0 0 10px #ff0000;
-        }
-
-        /* Mission Status */
-        .mission-status {
-            background: rgba(0, 100, 0, 0.3);
-            border: 3px solid #00ff00;
-            padding: 30px;
-            margin: 30px 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 40px rgba(0, 255, 0, 0.5);
-        }
-
-        .mission-status::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0, 255, 0, 0.1) 0%, transparent 70%);
-            transform: translate(-50%, -50%);
-            animation: radar 4s linear infinite;
-        }
-
-        @keyframes radar {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        .mission-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5em;
-            color: #00ff00;
-            margin-bottom: 15px;
-            text-shadow: 0 0 15px #00ff00;
-            position: relative;
-            z-index: 1;
-        }
-
-        .mission-desc {
-            font-size: 1.2em;
-            color: #00ffff;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Terminal Output */
-        .terminal-output {
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid #00ff00;
-            padding: 20px;
-            margin: 30px 0;
-            font-family: 'Share Tech Mono', monospace;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .terminal-line {
-            margin: 5px 0;
-            animation: type 0.5s steps(40, end);
-        }
-
-        .terminal-line::before {
-            content: '> ';
-            color: #00ff00;
-        }
-
-        @keyframes type {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        /* Footer */
-        .cyber-footer {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #00ff00;
-            padding: 20px;
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .cyber-footer p {
-            margin: 10px 0;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-title {
-                font-size: 2em;
-            }
-            
-            .agent-name {
-                font-size: 1.5em;
-            }
-            
-            .pipeline-steps {
-                flex-direction: column;
-            }
-            
-            .arrow-right {
-                transform: rotate(90deg);
-            }
-            
-            .tech-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        /* Glitch Text Effect */
-        .glitch {
-            position: relative;
-        }
-
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .glitch::before {
-            left: 2px;
-            text-shadow: -2px 0 #ff0000;
-            animation: glitch-1 2s infinite linear alternate-reverse;
-        }
-
-        .glitch::after {
-            left: -2px;
-            text-shadow: 2px 0 #00ffff;
-            animation: glitch-2 3s infinite linear alternate-reverse;
-        }
-
-        @keyframes glitch-1 {
-            0% { clip-path: inset(40% 0 61% 0); }
-            20% { clip-path: inset(92% 0 1% 0); }
-            40% { clip-path: inset(43% 0 1% 0); }
-            60% { clip-path: inset(25% 0 58% 0); }
-            80% { clip-path: inset(54% 0 7% 0); }
-            100% { clip-path: inset(58% 0 43% 0); }
-        }
-
-        @keyframes glitch-2 {
-            0% { clip-path: inset(25% 0 58% 0); }
-            20% { clip-path: inset(54% 0 7% 0); }
-            40% { clip-path: inset(58% 0 43% 0); }
-            60% { clip-path: inset(40% 0 61% 0); }
-            80% { clip-path: inset(92% 0 1% 0); }
-            100% { clip-path: inset(43% 0 1% 0); }
+        .badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
-    <canvas id="matrix-canvas"></canvas>
-    <div class="scanline"></div>
-    
-    <div class="container">
-        <!-- Terminal Header -->
-        <div class="terminal-header">
-            <div class="terminal-top">
-                <div class="terminal-buttons">
-                    <div class="btn red"></div>
-                    <div class="btn yellow"></div>
-                    <div class="btn green"></div>
-                </div>
-                <div class="terminal-title">⚠ CLASSIFIED CYBER DEFENSE SYSTEM ⚠</div>
-                <div class="system-time" id="system-time">00:00:00</div>
-            </div>
-        </div>
 
-        <!-- Main Header -->
-        <div class="cyber-header">
-            <div class="skull-icon">☠️</div>
-            <h1 class="main-title glitch" data-text="CYBER DEFENSE FORCE">CYBER DEFENSE FORCE</h1>
-            <div class="agent-name">AGENT: SHUBHAM MISHRA</div>
-            <div>
-                <span class="classification">⚠ TOP SECRET</span>
-                <span class="classification">🔒 ENCRYPTED</span>
-                <span class="classification">⚡ LIVE</span>
-            </div>
-        </div>
+<header>
+    <h1>Shubham Mishra</h1>
+    <p>DevOps & Cloud Infrastructure Engineer</p>
+    <div id="clock">00:00:00</div>
+</header>
 
-        <!-- System Status -->
-        <div class="status-grid">
-            <div class="status-panel">
-                <h3>🛡️ SYSTEM STATUS</h3>
-                <div class="status-item">
-                    <span>SECURITY LEVEL:</span>
-                    <span class="status-value">MAXIMUM</span>
-                </div>
-                <div class="status-item">
-                    <span>THREAT LEVEL:</span>
-                    <span class="status-value">SECURE</span>
-                </div>
-                <div class="status-item">
-                    <span>FIREWALL:</span>
-                    <span class="status-value active">ACTIVE</span>
-                </div>
-                <div class="status-item">
-                    <span>ENCRYPTION:</span>
-                    <span class="status-value active">AES-256</span>
-                </div>
-            </div>
-
-            <div class="status-panel">
-                <h3>📡 NETWORK STATUS</h3>
-                <div class="status-item">
-                    <span>UPLINK:</span>
-                    <span class="status-value active">CONNECTED</span>
-                </div>
-                <div class="status-item">
-                    <span>BANDWIDTH:</span>
-                    <span class="status-value">10 GB/s</span>
-                </div>
-                <div class="status-item">
-                    <span>LATENCY:</span>
-                    <span class="status-value">2ms</span>
-                </div>
-                <div class="status-item">
-                    <span>PACKETS:</span>
-                    <span class="status-value active">999,999</span>
-                </div>
-            </div>
-
-            <div class="status-panel">
-                <h3>🎯 MISSION METRICS</h3>
-                <div class="status-item">
-                    <span>DEPLOYMENTS:</span>
-                    <span class="status-value">1,247</span>
-                </div>
-                <div class="status-item">
-                    <span>SUCCESS RATE:</span>
-                    <span class="status-value">99.9%</span>
-                </div>
-                <div class="status-item">
-                    <span>UPTIME:</span>
-                    <span class="status-value active">99.99%</span>
-                </div>
-                <div class="status-item">
-                    <span>THREATS BLOCKED:</span>
-                    <span class="status-value">8,492</span>
-                </div>
-            </div>
-
-            <div class="status-panel">
-                <h3>⚙️ SYSTEM RESOURCES</h3>
-                <div class="status-item">
-                    <span>CPU USAGE:</span>
-                    <span class="status-value">23%</span>
-                </div>
-                <div class="status-item">
-                    <span>MEMORY:</span>
-                    <span class="status-value">4.2/16 GB</span>
-                </div>
-                <div class="status-item">
-                    <span>CONTAINERS:</span>
-                    <span class="status-value active">12 RUNNING</span>
-                </div>
-                <div class="status-item">
-                    <span>TEMPERATURE:</span>
-                    <span class="status-value">42°C</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tech Arsenal -->
-        <div class="tech-arsenal">
-            <h2 class="arsenal-title">⚔️ CYBER WEAPONS ARSENAL ⚔️</h2>
-            <div class="tech-grid">
-                <div class="tech-item">
-                    <div class="tech-icon">📝</div>
-                    <div class="tech-name">GIT<br>VERSION CONTROL</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-icon">🐙</div>
-                    <div class="tech-name">GITHUB<br>REPOSITORY</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-icon">🔧</div>
-                    <div class="tech-name">JENKINS<br>AUTOMATION</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-icon">🐳</div>
-                    <div class="tech-name">DOCKER<br>CONTAINERS</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-icon">📦</div>
-                    <div class="tech-name">ECR<br>REGISTRY</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-icon">☁️</div>
-                    <div class="tech-name">ECS<br>ORCHESTRATION</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-icon">🔐</div>
-                    <div class="tech-name">SECRETS<br>MANAGER</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-icon">⚡</div>
-                    <div class="tech-name">AWS<br>CLOUD POWER</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Attack Vector / Pipeline -->
-        <div class="attack-vector">
-            <h2 class="vector-title">⚡ DEPLOYMENT ATTACK VECTOR ⚡</h2>
-            <div class="pipeline-steps">
-                <div class="step">GIT PUSH</div>
-                <div class="arrow-right">▶</div>
-                <div class="step">JENKINS<br>TRIGGER</div>
-                <div class="arrow-right">▶</div>
-                <div class="step">DOCKER<br>BUILD</div>
-                <div class="arrow-right">▶</div>
-                <div class="step">ECR<br>UPLOAD</div>
-                <div class="arrow-right">▶</div>
-                <div class="step">ECS<br>DEPLOY</div>
-            </div>
-        </div>
-
-        <!-- Terminal Output -->
-        <div class="terminal-output">
-            <div class="terminal-line">[SYSTEM] Initializing Cyber Defense Protocol...</div>
-            <div class="terminal-line">[AUTH] Agent Shubham Mishra authenticated successfully</div>
-            <div class="terminal-line">[SCAN] Running security diagnostics... OK</div>
-            <div class="terminal-line">[DOCKER] Container image built successfully</div>
-            <div class="terminal-line">[ECR] Pushing to Elastic Container Registry... 100%</div>
-            <div class="terminal-line">[ECS] Deploying to production cluster... SUCCESS</div>
-            <div class="terminal-line">[SECRETS] Loading encrypted credentials from AWS Secrets Manager</div>
-            <div class="terminal-line">[FIREWALL] All ports secured and monitored</div>
-            <div class="terminal-line">[JENKINS] CI/CD pipeline executed flawlessly</div>
-            <div class="terminal-line">[STATUS] All systems operational. Mission accomplished!</div>
-            <div class="terminal-line" style="color: #00ff00; font-weight: bold;">[SUCCESS] DEPLOYMENT COMPLETE - SYSTEM ONLINE</div>
-        </div>
-
-        <!-- Mission Status -->
-        <div class="mission-status">
-            <h2 class="mission-title">🎯 MISSION STATUS: ACCOMPLISHED 🎯</h2>
-            <p class="mission-desc">PRODUCTION CI/CD PIPELINE FULLY OPERATIONAL</p>
-            <p class="mission-desc">ALL SECURITY PROTOCOLS ACTIVE | ZERO VULNERABILITIES DETECTED</p>
-        </div>
-
-        <!-- Footer -->
-        <div class="cyber-footer">
-            <p>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
-            <p style="color: #ff0000; font-weight: bold;">⚠ CLASSIFIED INFORMATION ⚠</p>
-            <p>POWERED BY: CI-CD-PIPELINE-GIT-GITHUB-JENKINS-DOCKER-ECR-ECS-SECRETS-MANAGER</p>
-            <p style="color: #00ffff;">CYBER DEFENSE FORCE © 2026 | AGENT: SHUBHAM MISHRA</p>
-            <p style="color: #ffff00;">🛡️ PROTECTED | 🔒 ENCRYPTED | ⚡ SECURE</p>
-            <p>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
-        </div>
+<div class="container">
+    <div class="pipeline-card">
+        <h2>Project: Enterprise CI/CD Pipeline</h2>
+        <p>This project demonstrates a production-grade automated deployment pipeline using a distributed Jenkins architecture on AWS.</p>
+        
+        <h3>The Architecture</h3>
+        <ul class="step-list">
+            <li><strong>Orchestration:</strong> <span class="badge">Jenkins Master</span> triggers builds but remains lightweight to ensure high availability.</li>
+            <li><strong>Security:</strong> Credentials (GitHub PAT) are never stored in Jenkins. The <span class="badge">Worker EC2</span> fetches them securely from <span class="badge">AWS Secrets Manager</span> using IAM roles.</li>
+            <li><strong>Execution:</strong> The <span class="badge">AWS SSM</span> agent allows the Master to securely communicate with Workers without exposing SSH ports.</li>
+            <li><strong>Containerization:</strong> The Worker node handles the <code>git clone</code>, <code>docker build</code>, and pushes the image to <span class="badge">Amazon ECR</span>.</li>
+            <li><strong>Deployment:</strong> Automatic updates to <span class="badge">Amazon ECS</span> (Task Definitions & Service) ensure zero-downtime deployments.</li>
+        </ul>
     </div>
+</div>
 
-    <script>
-        // Matrix Rain Effect
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
+<script>
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        document.getElementById('clock').textContent = timeString;
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); // Initial call
+</script>
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?/~`';
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-
-        const drops = Array(Math.floor(columns)).fill(1);
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#00ff00';
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-
-        setInterval(drawMatrix, 35);
-
-        // System Time
-        function updateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('system-time').textContent = 
-                `${hours}:${minutes}:${seconds} UTC`;
-        }
-
-        setInterval(updateTime, 1000);
-        updateTime();
-
-        // Window Resize
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-    </script>
 </body>
 </html>
