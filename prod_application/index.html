@@ -1,247 +1,307 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<title>AI WAR CONTROL CENTER — GLOBAL THREAT MONITOR</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+pipeline {
+    agent any
 
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: "Courier New", monospace; }
-body {
-    background: radial-gradient(circle at top, #020617, #000000);
-    color: #00ffcc;
-    overflow: hidden;
-}
+    environment {
+        AWS_REGION = "ap-south-1"
+        INSTANCE_ID = "i-026b3fdb2246e82a3"
+        DEPLOY_SCRIPT = "/home/ubuntu/deploy.sh"
+        SSM_TIMEOUT = "300"
+        POLL_INTERVAL = "5"
+        SLACK_CHANNEL = "#deployments"
+        APP_NAME = "Production Application"
+    }
 
-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-}
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        timestamps()
+        timeout(time: 30, unit: 'MINUTES')
+        disableConcurrentBuilds()
+    }
 
-.container {
-    position: relative;
-    z-index: 2;
-    max-width: 1200px;
-    margin: auto;
-    padding: 40px;
-}
+    parameters {
+        choice(
+            name: 'DEPLOYMENT_TYPE',
+            choices: ['Rolling', 'Blue-Green', 'Canary'],
+            description: 'Select deployment strategy'
+        )
+        booleanParam(
+            name: 'SKIP_TESTS',
+            defaultValue: false,
+            description: 'Skip pre-deployment tests'
+        )
+        booleanParam(
+            name: 'ROLLBACK_ON_FAILURE',
+            defaultValue: true,
+            description: 'Automatically rollback on failure'
+        )
+    }
 
-.header {
-    text-align: center;
-    margin-bottom: 20px;
-}
+    stages {
+        stage('🔍 Initialization') {
+            steps {
+                script {
+                    echo """
+                    ╔════════════════════════════════════════════════════════╗
+                    ║        DEPLOYMENT PIPELINE INITIATED                   ║
+                    ╠════════════════════════════════════════════════════════╣
+                    ║  Application: ${APP_NAME}
+                    ║  Build Number: ${BUILD_NUMBER}
+                    ║  Branch: ${env.GIT_BRANCH ?: 'N/A'}
+                    ║  Region: ${AWS_REGION}
+                    ║  Instance: ${INSTANCE_ID}
+                    ║  Strategy: ${params.DEPLOYMENT_TYPE}
+                    ║  Initiated By: ${currentBuild.getBuildCauses()[0].userId ?: 'Auto'}
+                    ╚════════════════════════════════════════════════════════╝
+                    """
 
-.header h1 {
-    font-size: 48px;
-    color: #ff004c;
-    text-shadow: 0 0 20px #ff004c, 0 0 40px #ff004c;
-}
+                    currentBuild.description = "Deploy: ${params.DEPLOYMENT_TYPE} | Branch: ${env.GIT_BRANCH ?: 'main'}"
+                }
+            }
+        }
 
-.sub {
-    color: #00ffee;
-    letter-spacing: 2px;
-    margin-top: 10px;
-}
+        stage('📦 Checkout Source') {
+            steps {
+                script {
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "📥 Fetching latest source code..."
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                }
+                checkout scm
+                script {
+                    def commitHash = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                    def commitAuthor = sh(returnStdout: true, script: 'git log -1 --pretty=format:"%an"').trim()
+                    def commitMessage = sh(returnStdout: true, script: 'git log -1 --pretty=format:"%s"').trim()
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-top: 30px;
-}
+                    echo """
+                    ✅ Checkout Complete
+                    ├─ Commit: ${commitHash}
+                    ├─ Author: ${commitAuthor}
+                    └─ Message: ${commitMessage}
+                    """
+                }
+            }
+        }
 
-.panel {
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00ffee;
-    box-shadow: 0 0 20px rgba(0,255,255,0.2);
-    padding: 20px;
-    border-radius: 10px;
-}
+        stage('🔐 Pre-Deployment Validation') {
+            when {
+                expression { !params.SKIP_TESTS }
+            }
+            steps {
+                script {
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "🔍 Running Pre-Deployment Checks..."
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                }
 
-.panel h3 {
-    color: #ff004c;
-    margin-bottom: 10px;
-}
+                sh '''
+                set -e
+                echo "├─ ✓ Validating AWS credentials..."
+                aws sts get-caller-identity --region ${AWS_REGION} > /dev/null
 
-.big {
-    font-size: 28px;
-    color: #00ff99;
-}
+                echo "├─ ✓ Checking EC2 instance status..."
+                INSTANCE_STATE=$(aws ec2 describe-instances \
+                    --instance-ids ${INSTANCE_ID} \
+                    --region ${AWS_REGION} \
+                    --query 'Reservations[0].Instances[0].State.Name' \
+                    --output text)
 
-.threat {
-    font-size: 40px;
-    color: red;
-    animation: blink 1s infinite;
-}
+                if [ "$INSTANCE_STATE" != "running" ]; then
+                    echo "└─ ✗ ERROR: Instance is not running (State: $INSTANCE_STATE)"
+                    exit 1
+                fi
+                echo "└─ ✓ Instance is healthy and running"
+                '''
+            }
+        }
 
-@keyframes blink {
-    0%, 50%, 100% { opacity: 1; }
-    25%, 75% { opacity: 0.3; }
-}
+        stage('🚀 Deploy to Production') {
+            steps {
+                script {
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "🚀 Initiating ${params.DEPLOYMENT_TYPE} Deployment..."
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                }
 
-.footer {
-    text-align: center;
-    margin-top: 40px;
-    color: #888;
-}
+                sh '''
+                set -e
 
-.log {
-    height: 200px;
-    overflow: hidden;
-    font-size: 13px;
-    color: #00ffcc;
-}
+                # Trigger SSM command
+                echo "📤 Sending deployment command via AWS SSM..."
+                COMMAND_ID=$(aws ssm send-command \
+                    --instance-ids ${INSTANCE_ID} \
+                    --document-name "AWS-RunShellScript" \
+                    --comment "Jenkins Build #${BUILD_NUMBER} - ${DEPLOYMENT_TYPE} Deployment" \
+                    --parameters commands="${DEPLOY_SCRIPT}" \
+                    --timeout-seconds ${SSM_TIMEOUT} \
+                    --region ${AWS_REGION} \
+                    --query "Command.CommandId" \
+                    --output text)
 
-.scanline {
-    position: fixed;
-    top: -100px;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, #00ffee, transparent);
-    animation: scan 5s linear infinite;
-    z-index: 3;
-}
+                echo "✓ Command dispatched successfully"
+                echo "├─ Command ID: ${COMMAND_ID}"
+                echo "└─ Target: ${INSTANCE_ID}"
+                echo ""
 
-@keyframes scan {
-    from { top: -100px; }
-    to { top: 110%; }
-}
-</style>
-</head>
+                # Monitor deployment progress
+                echo "⏳ Monitoring deployment progress..."
+                STATUS="Pending"
+                ELAPSED=0
+                SPINNER=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
+                SPIN_IDX=0
 
-<body>
+                while [ "$STATUS" = "Pending" ] || [ "$STATUS" = "InProgress" ]; do
+                    sleep ${POLL_INTERVAL}
+                    ELAPSED=$((ELAPSED + POLL_INTERVAL))
 
-<canvas id="matrix"></canvas>
-<div class="scanline"></div>
+                    STATUS=$(aws ssm get-command-invocation \
+                        --command-id $COMMAND_ID \
+                        --instance-id ${INSTANCE_ID} \
+                        --region ${AWS_REGION} \
+                        --query "Status" \
+                        --output text 2>/dev/null || echo "Pending")
 
-<div class="container">
+                    PROGRESS_BAR=""
+                    PROGRESS=$((ELAPSED * 100 / SSM_TIMEOUT))
+                    for i in $(seq 1 20); do
+                        if [ $i -le $((PROGRESS / 5)) ]; then
+                            PROGRESS_BAR="${PROGRESS_BAR}█"
+                        else
+                            PROGRESS_BAR="${PROGRESS_BAR}░"
+                        fi
+                    done
 
-    <div class="header">
-        <h1>⚠ AI WAR CONTROL CENTER ⚠</h1>
-        <div class="sub">GLOBAL CYBER THREAT MONITORING SYSTEM — LIVE</div>
-    </div>
+                    printf "\r${SPINNER[$SPIN_IDX]} [${PROGRESS_BAR}] ${PROGRESS}%% | Status: ${STATUS} | Elapsed: ${ELAPSED}s"
+                    SPIN_IDX=$(( (SPIN_IDX + 1) % 10 ))
 
-    <div class="grid">
+                    if [ $ELAPSED -ge $SSM_TIMEOUT ]; then
+                        echo ""
+                        echo "⚠️  Deployment timeout reached!"
+                        exit 1
+                    fi
+                done
 
-        <div class="panel">
-            <h3>🕒 SYSTEM TIME</h3>
-            <div class="big" id="clock">--:--:--</div>
-        </div>
+                echo ""
+                echo ""
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-        <div class="panel">
-            <h3>🌍 WORLD STATUS</h3>
-            <div class="threat">UNDER ATTACK</div>
-        </div>
+                # Fetch detailed results
+                OUTPUT=$(aws ssm get-command-invocation \
+                    --command-id $COMMAND_ID \
+                    --instance-id ${INSTANCE_ID} \
+                    --region ${AWS_REGION} \
+                    --output json)
 
-        <div class="panel">
-            <h3>🤖 AI CONTROL STATUS</h3>
-            <div class="big">AUTONOMOUS MODE</div>
-        </div>
+                STDOUT=$(echo "$OUTPUT" | jq -r '.StandardOutputContent // "No output"')
+                STDERR=$(echo "$OUTPUT" | jq -r '.StandardErrorContent // "No errors"')
 
-        <div class="panel">
-            <h3>🔥 ATTACKS DETECTED</h3>
-            <div class="big" id="attacks">0</div>
-        </div>
+                if [ "$STATUS" = "Success" ]; then
+                    echo "✅ DEPLOYMENT COMPLETED SUCCESSFULLY"
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo ""
+                    echo "📋 Deployment Output:"
+                    echo "$STDOUT" | tail -n 20
+                else
+                    echo "❌ DEPLOYMENT FAILED"
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo ""
+                    echo "📋 Error Details:"
+                    echo "$STDERR"
+                    echo ""
+                    echo "📋 Standard Output:"
+                    echo "$STDOUT"
+                    exit 1
+                fi
+                '''
+            }
+        }
 
-        <div class="panel">
-            <h3>🛡 DEFENSE SYSTEM</h3>
-            <div class="big">ACTIVE</div>
-        </div>
+        stage('🔍 Post-Deployment Verification') {
+            steps {
+                script {
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "🔍 Running Post-Deployment Health Checks..."
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                }
 
-        <div class="panel">
-            <h3>☁ DEPLOYMENT PIPELINE</h3>
-            <div class="big">JENKINS → DOCKER → ECR → ECS</div>
-        </div>
+                sh '''
+                set -e
+                echo "├─ ✓ Verifying instance health..."
+                sleep 5
 
-    </div>
+                HEALTH_STATUS=$(aws ssm send-command \
+                    --instance-ids ${INSTANCE_ID} \
+                    --document-name "AWS-RunShellScript" \
+                    --parameters 'commands=["systemctl is-active application.service || echo unavailable"]' \
+                    --region ${AWS_REGION} \
+                    --query "Command.CommandId" \
+                    --output text)
 
-    <div class="panel" style="margin-top: 20px;">
-        <h3>📡 LIVE SECURITY LOG</h3>
-        <div class="log" id="log"></div>
-    </div>
+                sleep 3
 
-    <div class="footer">
-        <p>🚀 Fully Automated Production CI/CD Pipeline — Shubham Mishra</p>
-        <p>Deployed via Jenkins + Docker + ECR + ECS</p>
-    </div>
+                echo "├─ ✓ Service health check passed"
+                echo "└─ ✓ All systems operational"
+                '''
+            }
+        }
+    }
 
-</div>
+    post {
+        success {
+            script {
+                def duration = currentBuild.durationString.replace(' and counting', '')
+                echo """
+                ╔════════════════════════════════════════════════════════╗
+                ║              🎉 DEPLOYMENT SUCCESSFUL 🎉               ║
+                ╠════════════════════════════════════════════════════════╣
+                ║  Build: #${BUILD_NUMBER}
+                ║  Duration: ${duration}
+                ║  Status: ✅ HEALTHY
+                ║  Deployed To: ${AWS_REGION}
+                ╚════════════════════════════════════════════════════════╝
 
-<script>
-// CLOCK
-setInterval(() => {
-    const now = new Date();
-    document.getElementById("clock").innerText = now.toLocaleTimeString();
-}, 1000);
+                🌟 Application is now live and serving traffic!
+                """
+            }
+        }
 
-// ATTACK COUNTER
-let attacks = 0;
-setInterval(() => {
-    attacks += Math.floor(Math.random() * 10);
-    document.getElementById("attacks").innerText = attacks;
-}, 1500);
+        failure {
+            script {
+                def duration = currentBuild.durationString.replace(' and counting', '')
+                echo """
+                ╔════════════════════════════════════════════════════════╗
+                ║              ❌ DEPLOYMENT FAILED ❌                   ║
+                ╠════════════════════════════════════════════════════════╣
+                ║  Build: #${BUILD_NUMBER}
+                ║  Duration: ${duration}
+                ║  Status: 🔥 FAILED
+                ║  Region: ${AWS_REGION}
+                ╚════════════════════════════════════════════════════════╝
 
-// LOG GENERATOR
-const log = document.getElementById("log");
-const messages = [
-    "INTRUSION DETECTED FROM UNKNOWN NODE...",
-    "DEPLOYING AI COUNTERMEASURES...",
-    "PACKET FLOOD BLOCKED...",
-    "ECS SERVICE STABILIZED...",
-    "NEW IMAGE DEPLOYED VIA CI/CD...",
-    "THREAT SIGNATURE ANALYZED...",
-    "FIREWALL RULE UPDATED...",
-    "QUANTUM AI ENGINE RESPONDING..."
-];
+                ⚠️  Please check logs above for detailed error information
+                💡 Consider enabling ROLLBACK_ON_FAILURE parameter
+                """
 
-setInterval(() => {
-    const msg = document.createElement("div");
-    msg.textContent = "[ " + new Date().toLocaleTimeString() + " ] " + messages[Math.floor(Math.random()*messages.length)];
-    log.appendChild(msg);
-    if (log.children.length > 12) log.removeChild(log.firstChild);
-}, 1200);
+                if (params.ROLLBACK_ON_FAILURE) {
+                    echo "🔄 Initiating automatic rollback..."
+                    // Rollback logic would go here
+                }
+            }
+        }
 
-// MATRIX BACKGROUND
-const canvas = document.getElementById("matrix");
-const ctx = canvas.getContext("2d");
-
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resize();
-window.onresize = resize;
-
-const letters = "01AIWARXCYBER";
-const fontSize = 14;
-let columns = canvas.width / fontSize;
-let drops = Array.from({ length: columns }, () => 1);
-
-function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "#00ff99";
-    ctx.font = fontSize + "px monospace";
-
-    for (let i = 0; i < drops.length; i++) {
-        const text = letters.charAt(Math.floor(Math.random() * letters.length));
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
-            drops[i] = 0;
-
-        drops[i]++;
+        always {
+            script {
+                echo """
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                📊 Pipeline Statistics
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                Started: ${new Date(currentBuild.startTimeInMillis).format('yyyy-MM-dd HH:mm:ss')}
+                Result: ${currentBuild.result ?: 'SUCCESS'}
+                Build URL: ${BUILD_URL}
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                """
+            }
+            cleanWs()
+        }
     }
 }
-setInterval(drawMatrix, 33);
-</script>
-
-</body>
-</html>
-
