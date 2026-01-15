@@ -7,6 +7,7 @@ pipeline {
     }
 
     stages {
+
         stage("Checkout") {
             steps {
                 checkout scm
@@ -16,44 +17,89 @@ pipeline {
         stage("Detect Changes") {
             steps {
                 script {
-                    CHANGED = sh(
+                    def changedFiles = sh(
                         script: "git diff --name-only HEAD~1 HEAD",
                         returnStdout: true
                     ).trim()
 
-                    echo "Changed files:\n${CHANGED}"
+                    echo "Changed files:\n${changedFiles}"
 
-                    DEPLOY_NASA = CHANGED.contains("nasa_application/")
-                    DEPLOY_PROD = CHANGED.contains("prod_application/")
+                    env.DEPLOY_PROD = changedFiles.contains("prod_application/") ? "true" : "false"
+                    env.DEPLOY_NASA = changedFiles.contains("nasa_application/") ? "true" : "false"
                 }
             }
         }
 
         stage("Deploy NASA") {
-            when { expression { DEPLOY_NASA } }
+            when { expression { env.DEPLOY_NASA == "true" } }
             steps {
-                sh """
-                aws ssm send-command \
-                  --instance-ids ${INSTANCE_ID} \
-                  --document-name AWS-RunShellScript \
-                  --parameters commands="/home/ubuntu/deploy.sh nasa" \
-                  --region ${AWS_REGION}
-                """
+                script {
+                    runSSM("nasa")
+                }
             }
         }
 
         stage("Deploy PROD") {
-            when { expression { DEPLOY_PROD } }
+            when { expression { env.DEPLOY_PROD == "true" } }
             steps {
-                sh """
-                aws ssm send-command \
-                  --instance-ids ${INSTANCE_ID} \
-                  --document-name AWS-RunShellScript \
-                  --parameters commands="/home/ubuntu/deploy.sh prod" \
-                  --region ${AWS_REGION}
-                """
+                script {
+                    runSSM("prod")
+                }
             }
         }
     }
+
+    post {
+        success { echo "✅ Pipeline completed successfully" }
+        failure { echo "❌ Pipeline failed" }
+    }
+}
+
+def runSSM(service) {
+    def cmd = sh(
+        script: """
+        aws ssm send-command \
+          --instance-ids ${INSTANCE_ID} \
+          --document-name AWS-RunShellScript \
+          --parameters commands="/home/ubuntu/deploy.sh ${service}" \
+          --region ${AWS_REGION} \
+          --query Command.CommandId \
+          --output text
+        """,
+        returnStdout: true
+    ).trim()
+
+    echo "SSM Command ID: ${cmd}"
+
+    def status = "Pending"
+
+    while (status == "Pending" || status == "InProgress") {
+        sleep 5
+        status = sh(
+            script: """
+            aws ssm get-command-invocation \
+              --command-id ${cmd} \
+              --instance-id ${INSTANCE_ID} \
+              --region ${AWS_REGION} \
+              --query Status \
+              --output text
+            """,
+            returnStdout: true
+        ).trim()
+
+        echo "Current SSM status: ${status}"
+    }
+
+    if (status != "Success") {
+        sh """
+        aws ssm get-command-invocation \
+          --command-id ${cmd} \
+          --instance-id ${INSTANCE_ID} \
+          --region ${AWS_REGION}
+        """
+        error("❌ Deployment failed on worker")
+    }
+
+    echo "✅ Deployment succeeded for ${service}"
 }
 
