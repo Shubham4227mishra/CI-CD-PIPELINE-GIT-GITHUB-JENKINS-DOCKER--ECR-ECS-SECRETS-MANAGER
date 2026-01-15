@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NASA Mission Control – Live Ops</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: radial-gradient(circle at top, #020824, #000000);
+      color: #00e5ff;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: linear-gradient(90deg, #00172a, #002f4b);
+      padding: 20px;
+      text-align: center;
+      font-size: 28px;
+      letter-spacing: 2px;
+      font-weight: bold;
+      border-bottom: 2px solid #00e5ff;
+    }
+
+    .container {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(0, 20, 40, 0.8);
+      border: 1px solid #00e5ff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 40px rgba(0, 229, 255, 0.7);
+    }
+
+    .title {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #7df9ff;
+    }
+
+    .value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .log {
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
+      padding: 15px;
+      border-radius: 8px;
+      height: 250px;
+      overflow-y: auto;
+      border: 1px solid #00ff00;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #888;
+      border-top: 1px solid #00e5ff;
+    }
+
+    .blink {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+
+    .status-ok {
+      color: #00ff00;
+    }
+
+    .status-warn {
+      color: #ffaa00;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  🛰️ NASA MISSION CONTROL — LIVE SPACE OPERATIONS CENTER
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <div class="title">🚀 Mission Name</div>
+    <div class="value">ARTEMIS-X ORBITAL DEPLOY</div>
+  </div>
+
+  <div class="card">
+    <div class="title">🧭 Mission Status</div>
+    <div class="value status-ok blink">OPERATIONAL</div>
+  </div>
+
+  <div class="card">
+    <div class="title">🌍 Current Orbit</div>
+    <div class="value">LOW EARTH ORBIT</div>
+  </div>
+
+  <div class="card">
+    <div class="title">⛽ Fuel Level</div>
+    <div class="value">87%</div>
+  </div>
+
+  <div class="card">
+    <div class="title">📡 Telemetry Link</div>
+    <div class="value status-ok">CONNECTED</div>
+  </div>
+
+  <div class="card">
+    <div class="title">🧠 AI Navigation Core</div>
+    <div class="value status-ok">ONLINE</div>
+  </div>
+
+  <div class="card" style="grid-column: 1 / -1;">
+    <div class="title">📟 Live Mission Log</div>
+    <div class="log" id="log">
+      [BOOT] Initializing spacecraft systems...<br>
+      [OK] Navigation core online<br>
+      [OK] Telemetry uplink established<br>
+      [OK] Reactor stabilized<br>
+      [INFO] Awaiting next mission command...<br>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Space Operations Command | Powered by ECS • ECR • Jenkins • AWS • CI/CD
+</footer>
+
+<script>
+  const log = document.getElementById("log");
+
+  const messages = [
+    "[INFO] Solar panel alignment adjusted",
+    "[OK] Course correction complete",
+    "[INFO] Scanning deep space sector 7G",
+    "[OK] All systems nominal",
+    "[WARN] Minor radiation spike detected",
+    "[OK] Shielding compensated",
+    "[INFO] Telemetry sync complete",
+    "[OK] Mission stable"
+  ];
+
+  setInterval(() => {
+    const msg = messages[Math.floor(Math.random() * messages.length)];
+    log.innerHTML += msg + "<br>";
+    log.scrollTop = log.scrollHeight;
+  }, 2000);
+</script>
+
+</body>
+</html>
+
