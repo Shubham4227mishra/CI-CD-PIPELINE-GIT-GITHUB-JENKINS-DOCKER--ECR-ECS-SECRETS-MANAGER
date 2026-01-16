@@ -110,9 +110,9 @@ def runSSM(service) {
           --instance-id ${INSTANCE_ID} \
           --region ${AWS_REGION}
         """
-        error("Deployment failed on worker")
+        error("Deployment Failed on worker")
     }
 
-    echo "Deployment succeeded for ${service}"
+    echo "Deployment Succeeded for ${service}"
 }
 
