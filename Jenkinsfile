@@ -4,7 +4,6 @@ pipeline {
     environment {
         AWS_REGION = "ap-south-1"
         INSTANCE_ID = "i-026b3fdb2246e82a3"
-        NOTIFY_EMAIL = "your-email@gmail.com"
     }
 
     stages {
@@ -53,31 +52,6 @@ pipeline {
             }
         }
 
-        stage("Approve PROD Deployment") {
-            when { expression { env.DEPLOY_PROD == "true" } }
-            steps {
-                script {
-                    emailext(
-                        subject: "Approval needed: PROD deployment",
-                        to: env.NOTIFY_EMAIL,
-                        body: """
-PROD deployment requires approval.
-
-Job: ${env.JOB_NAME}
-Build: ${env.BUILD_NUMBER}
-Commit: ${env.GIT_COMMIT}
-
-Open Jenkins and approve the deployment.
-"""
-                    )
-
-                    timeout(time: 2, unit: 'HOURS') {
-                        input message: "Approve deployment to PROD?", ok: "Deploy to PROD"
-                    }
-                }
-            }
-        }
-
         stage("Deploy PROD") {
             when { expression { env.DEPLOY_PROD == "true" } }
             steps {
@@ -89,20 +63,8 @@ Open Jenkins and approve the deployment.
     }
 
     post {
-        success {
-            emailext(
-                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                to: env.NOTIFY_EMAIL,
-                body: "Deployment pipeline completed successfully."
-            )
-        }
-        failure {
-            emailext(
-                subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                to: env.NOTIFY_EMAIL,
-                body: "Deployment pipeline failed. Check Jenkins console."
-            )
-        }
+        success { echo "Pipeline completed successfully" }
+        failure { echo "Pipeline failed" }
     }
 }
 
@@ -112,7 +74,7 @@ def runSSM(service) {
         aws ssm send-command \
           --instance-ids ${INSTANCE_ID} \
           --document-name AWS-RunShellScript \
-          --parameters commands="cd /home/ubuntu/project && ./deploy.sh ${service}" \
+          --parameters commands="/home/ubuntu/project/deploy.sh ${service}" \
           --region ${AWS_REGION} \
           --query Command.CommandId \
           --output text
