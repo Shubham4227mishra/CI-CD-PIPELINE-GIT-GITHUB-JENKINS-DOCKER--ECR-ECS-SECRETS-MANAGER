@@ -1,4 +1,6 @@
 #!/bin/bash
+echo "RUN START: $(date) SERVICE=$1" >> /home/ubuntu/deploy-history.log
+
 set -e
 exec > /home/ubuntu/deploy.log 2>&1
 

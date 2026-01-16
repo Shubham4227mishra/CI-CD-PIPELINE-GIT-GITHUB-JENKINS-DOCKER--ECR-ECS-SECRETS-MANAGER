@@ -74,7 +74,7 @@ def runSSM(service) {
         aws ssm send-command \
           --instance-ids ${INSTANCE_ID} \
           --document-name AWS-RunShellScript \
-          --parameters commands="/home/ubuntu/project/deploy.sh ${service}" \
+          --parameters commands="bash /home/ubuntu/project/deploy.sh ${service}" \
           --region ${AWS_REGION} \
           --query Command.CommandId \
           --output text
