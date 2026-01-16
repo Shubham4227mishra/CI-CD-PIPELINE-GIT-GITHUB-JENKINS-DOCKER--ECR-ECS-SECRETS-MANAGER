@@ -3,119 +3,139 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Shubham Mishra | Cloud & DevOps Portfolio</title>
+<title>Shubham Mishra | Cloud & DevOps Architect</title>
 
 <style>
 :root {
-  --primary: #38bdf8;
-  --secondary: #22c55e;
-  --dark: #020617;
-  --light: #f8fafc;
-  --card: #020617cc;
+  --primary: #c084fc;
+  --accent: #22ff88;
+  --bg1: #0a0014;
+  --bg2: #1a002a;
+  --card: rgba(30, 0, 50, 0.75);
+  --border: rgba(192, 132, 252, 0.6);
 }
 
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, sans-serif;
-  background: radial-gradient(circle at top, #020824, #000000);
-  color: #e5faff;
+  background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+  color: #f5e9ff;
 }
 
+/* ===== HEADER ===== */
 header {
-  background: linear-gradient(135deg, #020617, #020824);
-  padding: 3rem 1rem;
+  background: linear-gradient(135deg, #1a002a, #2a0040, #1a002a);
+  padding: 3.5rem 1rem;
   text-align: center;
-  border-bottom: 2px solid var(--primary);
+  border-bottom: 3px solid var(--primary);
+  box-shadow: 0 0 40px rgba(192,132,252,0.5);
 }
 
 header h1 {
   margin: 0;
-  font-size: 3rem;
-  letter-spacing: 2px;
+  font-size: 3.2rem;
+  letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(192,132,252,0.8);
 }
 
 header p {
-  margin-top: 0.5rem;
-  color: #7dd3fc;
-  font-size: 1.2rem;
+  margin-top: 0.6rem;
+  color: #e9d5ff;
+  font-size: 1.3rem;
 }
 
+/* ===== CLOCK ===== */
 #clock {
-  font-size: 2.2rem;
-  margin-top: 1rem;
-  color: #22d3ee;
+  font-size: 2.4rem;
+  margin-top: 1.2rem;
+  color: var(--accent);
   font-weight: bold;
+  text-shadow: 0 0 15px rgba(34,255,136,0.8);
 }
 
+/* ===== VERSION BADGE ===== */
 .version {
-  margin-top: 1rem;
+  margin-top: 1.2rem;
   display: inline-block;
-  padding: 6px 16px;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #22c55e, #4ade80);
-  color: #022c22;
-  font-weight: bold;
+  padding: 10px 22px;
+  border-radius: 30px;
+  background: linear-gradient(90deg, #22ff88, #00ffaa);
+  color: #002b1a;
+  font-weight: 900;
+  letter-spacing: 1px;
+  box-shadow: 0 0 25px rgba(34,255,136,0.8);
 }
 
+/* ===== CONTAINER ===== */
 .container {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  max-width: 1100px;
+  margin: 2.5rem auto;
+  padding: 0 1.2rem;
 }
 
+/* ===== CARDS ===== */
 .card {
   background: var(--card);
-  border: 1px solid #0ea5e9;
-  border-radius: 14px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 0 25px rgba(14,165,233,0.25);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 2.2rem;
+  margin-bottom: 2.2rem;
+  box-shadow: 0 0 35px rgba(192,132,252,0.4);
+  backdrop-filter: blur(6px);
 }
 
 h2 {
-  color: #38bdf8;
-  border-bottom: 1px solid #0ea5e9;
-  padding-bottom: 10px;
+  color: #e9d5ff;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  text-shadow: 0 0 10px rgba(192,132,252,0.7);
 }
 
+/* ===== FLOW ===== */
 .flow {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 15px;
-  margin-top: 1.5rem;
+  gap: 18px;
+  margin-top: 1.6rem;
 }
 
 .flow div {
-  background: #020617;
-  border: 1px solid #0ea5e9;
-  border-radius: 10px;
-  padding: 15px;
+  background: rgba(20,0,40,0.8);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
   text-align: center;
   font-weight: bold;
   transition: 0.3s;
+  box-shadow: 0 0 15px rgba(192,132,252,0.3);
 }
 
 .flow div:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(56,189,248,0.7);
+  transform: scale(1.07);
+  box-shadow: 0 0 30px rgba(192,132,252,0.9);
 }
 
+/* ===== BADGES ===== */
 .badge {
   display: inline-block;
-  background: #0ea5e9;
-  color: #020617;
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-weight: bold;
+  background: linear-gradient(90deg, #c084fc, #f0abfc);
+  color: #2a0040;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-weight: 900;
   font-size: 0.85rem;
+  margin-right: 6px;
+  box-shadow: 0 0 10px rgba(192,132,252,0.8);
 }
 
+/* ===== FOOTER ===== */
 footer {
   text-align: center;
-  padding: 20px;
-  color: #64748b;
-  border-top: 1px solid #0ea5e9;
-  margin-top: 40px;
+  padding: 24px;
+  color: #c4b5fd;
+  border-top: 1px solid var(--border);
+  margin-top: 50px;
+  text-shadow: 0 0 8px rgba(192,132,252,0.6);
 }
 </style>
 </head>
@@ -124,26 +144,26 @@ footer {
 
 <header>
   <h1>Shubham Mishra</h1>
-  <p>Cloud • DevOps • Infrastructure Engineer</p>
+  <p>Cloud • DevOps • Platform Architect</p>
 
   <div id="clock">00:00:00</div>
 
   <div class="version">
-    🚀 LIVE DEPLOYMENT • VERSION: 2026-01-15 • CI/CD ACTIVE
+    🚀 LIVE DEPLOYMENT • VERSION: PURPLE-NEON-2026 • CI/CD ACTIVE
   </div>
 </header>
 
 <div class="container">
 
   <div class="card">
-    <h2>📦 Production CI/CD Platform</h2>
+    <h2>📦 Enterprise CI/CD Platform</h2>
     <p>
-      This environment demonstrates a <b>Real fintech enterprise-grade, zero-SSH, fully automated CI/CD system</b> built on AWS using Jenkins, Docker, ECR, ECS, SSM and Secrets Manager.
+      This environment demonstrates a <b>bank-grade, zero-SSH, fully automated CI/CD platform</b> built on AWS using Jenkins, Docker, ECR, ECS, SSM and Secrets Manager.
     </p>
     <p>
-      Every GitHub push automatically triggers a secure pipeline and deploys directly to AWS Fargate with immutable versioned images.
+      Every GitHub push produces an immutable image and performs a controlled rolling deployment to production.
     </p>
-    <span class="badge">PRODUCTION-GRADE</span>
+    <span class="badge">ENTERPRISE</span>
     <span class="badge">ZERO-DOWNTIME</span>
     <span class="badge">IMMUTABLE</span>
   </div>
@@ -152,33 +172,33 @@ footer {
     <h2>⚙️ Deployment Flow</h2>
 
     <div class="flow">
-      <div>👨‍💻 Developer Push</div>
+      <div>👨‍💻 Git Push</div>
       <div>🐙 GitHub Webhook</div>
-      <div>🧠 Jenkins Master</div>
+      <div>🧠 Jenkins</div>
       <div>🔐 AWS SSM</div>
-      <div>🏗️ Worker EC2</div>
+      <div>🏗️ Worker Fleet</div>
       <div>🐳 Docker Build</div>
-      <div>📦 ECR Push</div>
-      <div>🚀 ECS Deploy</div>
-      <div>✅ Live in Prod</div>
+      <div>📦 ECR</div>
+      <div>🚀 ECS Rolling Deploy</div>
+      <div>✅ Live Traffic</div>
     </div>
   </div>
 
   <div class="card">
-    <h2>🛡️ Security Design</h2>
+    <h2>🛡️ Security Architecture</h2>
     <ul>
-      <li>No SSH keys on servers</li>
-      <li>No credentials stored in Jenkins</li>
+      <li>No SSH or inbound access to servers</li>
+      <li>No static credentials anywhere</li>
       <li>IAM Roles + AWS Secrets Manager</li>
-      <li>SSM RunCommand for secure execution</li>
-      <li>Private ECR + Fargate</li>
+      <li>SSM RunCommand for execution</li>
+      <li>Private ECR and private subnets</li>
     </ul>
   </div>
 
 </div>
 
 <footer>
-  © 2026 Shubham Mishra • Powered by AWS ECS • ECR • Jenkins • CI/CD • Docker
+  © 2026 Shubham Mishra • Platform Engineering • AWS • Jenkins • ECS • ECR • CI/CD
 </footer>
 
 <script>
