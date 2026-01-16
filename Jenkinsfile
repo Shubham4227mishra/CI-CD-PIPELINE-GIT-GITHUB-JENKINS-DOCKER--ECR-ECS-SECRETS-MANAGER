@@ -17,15 +17,28 @@ pipeline {
         stage("Detect Changes") {
             steps {
                 script {
+                    def diffRange = ""
+
+                    if (env.GIT_PREVIOUS_SUCCESSFUL_COMMIT) {
+                        diffRange = "${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT} ${env.GIT_COMMIT}"
+                        echo "Diffing from last successful commit: ${diffRange}"
+                    } else {
+                        diffRange = "HEAD~50 HEAD"
+                        echo "No previous successful commit found. Using fallback range: ${diffRange}"
+                    }
+
                     def changedFiles = sh(
-                        script: "git diff --name-only HEAD~1 HEAD",
+                        script: "git diff --name-only ${diffRange}",
                         returnStdout: true
                     ).trim()
 
-                    echo "Changed files:\n${changedFiles}"
+                    echo "Changed files since last successful build:\n${changedFiles}"
 
                     env.DEPLOY_PROD = changedFiles.contains("prod_application/") ? "true" : "false"
                     env.DEPLOY_NASA = changedFiles.contains("nasa_application/") ? "true" : "false"
+
+                    echo "DEPLOY_PROD = ${env.DEPLOY_PROD}"
+                    echo "DEPLOY_NASA = ${env.DEPLOY_NASA}"
                 }
             }
         }
@@ -50,8 +63,8 @@ pipeline {
     }
 
     post {
-        success { echo "✅ Pipeline completed successfully" }
-        failure { echo "❌ Pipeline failed" }
+        success { echo "Pipeline completed successfully" }
+        failure { echo "Pipeline failed" }
     }
 }
 
@@ -97,9 +110,9 @@ def runSSM(service) {
           --instance-id ${INSTANCE_ID} \
           --region ${AWS_REGION}
         """
-        error("❌ Deployment failed on worker")
+        error("Deployment failed on worker")
     }
 
-    echo "✅ Deployment succeeded for ${service}"
+    echo "Deployment succeeded for ${service}"
 }
 
